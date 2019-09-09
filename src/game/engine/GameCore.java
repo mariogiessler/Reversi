@@ -381,23 +381,21 @@ public class GameCore extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 1) {
 
-			if (e.getSource().equals(restart)) {
-				start();
-			}
+		if (e.getSource().equals(restart)) {
+			start();
+		}
 
-			int clickedX = (e.getX() / 60) - 1;
-			int clickedY = (e.getY() / 60) - 1;
-			int clickedPin = clickedX + (clickedY * 8);
+		int clickedX = (e.getX() / 60) - 1;
+		int clickedY = (e.getY() / 60) - 1;
+		int clickedPin = clickedX + (clickedY * 8);
 
-			for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
+		for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
 
-				Pin tmp = i.next();
-				if (((tmp.getX() + 26) - e.getX()) * ((tmp.getX() + 26) - e.getX())
-						+ ((tmp.getY() + 26) - e.getY()) * ((tmp.getY() + 26) - e.getY()) < 25 * 25) {
-					setMove(clickedX, clickedY, clickedPin);
-				}
+			Pin tmp = i.next();
+			if (((tmp.getX() + 26) - e.getX()) * ((tmp.getX() + 26) - e.getX())
+					+ ((tmp.getY() + 26) - e.getY()) * ((tmp.getY() + 26) - e.getY()) < 25 * 25) {
+				setMove(clickedX, clickedY, clickedPin);
 			}
 		}
 	}
