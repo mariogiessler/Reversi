@@ -11,6 +11,8 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
 public class infoBoard extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	// Label-Text:
 	private final String PLAYER_BEFORE_TEXT = "Spieler ";
 	private final String PLAYER_AFTER_TEXT = " ist am Zug!";
@@ -64,7 +66,7 @@ public class infoBoard extends JPanel {
 
 		Dimension d = this.getPreferredSize();
 
-		if(GameCore.getPlayerNow()!=null) {
+		if (GameCore.getPlayerNow() != null) {
 			// Label:
 			g2.setColor(Board.SHADOW_COLOR);
 			g2.setStroke(new BasicStroke(12));
@@ -98,7 +100,7 @@ public class infoBoard extends JPanel {
 			g2.drawString(movesDone(GameCore.getPlayerNow().getMoves()), (d.width / 2) - 60, 245);
 
 		}
-		
+
 	}
 
 }

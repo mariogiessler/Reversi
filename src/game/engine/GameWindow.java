@@ -1,16 +1,16 @@
 package game.engine;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class GameWindow extends JPanel{
+public class GameWindow extends JPanel {
+	private static final long serialVersionUID = 1L;
 
 	private JFrame main;
-	private  JPanel back;
+	private JPanel back;
 
 	public GameWindow() {
 
@@ -19,7 +19,7 @@ public class GameWindow extends JPanel{
 		setLayout(null);
 		main.getContentPane().add(this);
 		main.setIgnoreRepaint(true);
-		
+
 		back = new JPanel();
 		back.setPreferredSize(new Dimension(800, 600));
 		back.setLayout(new BorderLayout());
@@ -31,8 +31,8 @@ public class GameWindow extends JPanel{
 		main.setVisible(true);
 		main.setResizable(false);
 	}
-	
-	public  JPanel getBack() {
+
+	public JPanel getBack() {
 		return this.back;
 	}
 }

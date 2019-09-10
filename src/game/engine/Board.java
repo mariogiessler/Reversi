@@ -13,9 +13,10 @@ import javax.swing.JPanel;
 
 public class Board extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+	final static Color SHADOW_COLOR = new Color(10, 10, 10, 30);
 	// Board-Colors:
 	private final Color MAIN_COLOR = new Color(250, 250, 250, 255);
-	final static Color SHADOW_COLOR = new Color(10, 10, 10, 30);
 
 	// Game-Over Colors:
 	private final Color LABEL_COLOR = new Color(240, 255, 240, 160);
@@ -33,12 +34,6 @@ public class Board extends JPanel {
 		new JPanel();
 		this.setPreferredSize(new Dimension(600, 600));
 		this.setOpaque(false);
-	}
-
-	public void setGameOver(boolean isGameOver, String gameOverLabel) {
-		// Becomes the Game-Over Message from GameCore
-		this.isGameOver = isGameOver;
-		this.gameOverLabel = gameOverLabel;
 	}
 
 	public boolean getGameOver() {
@@ -83,6 +78,12 @@ public class Board extends JPanel {
 			g2.setFont(FONT_MAIN);
 			g2.drawString(gameOverLabel, 110, 330);
 		}
+	}
+
+	public void setGameOver(boolean isGameOver, String gameOverLabel) {
+		// Becomes the Game-Over Message from GameCore
+		this.isGameOver = isGameOver;
+		this.gameOverLabel = gameOverLabel;
 	}
 
 }

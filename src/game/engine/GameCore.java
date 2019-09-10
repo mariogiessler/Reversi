@@ -15,28 +15,49 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class GameCore extends JPanel implements MouseListener {
-	// Player-Colors:
-	private final Color PLAYER_COLOR_NONE = new Color(230, 230, 230, 150);
+	private static final long serialVersionUID = 1L;
 	private final static Color PLAYER_COLOR_ONE = new Color(220, 20, 20);
 	private final static Color PLAYER_COLOR_TWO = new Color(50, 100, 200);
+	private static ArrayList<Pin> pin;
+	private static Player playerNow;
+
+	private static Player playerSecond;
+
+	public static ArrayList<Pin> getPinList() {
+		return pin;
+	}
+	public static Player getPlayerNow() {
+		return playerNow;
+	}
+
+	public static Color getPlayerOneColor() {
+		return PLAYER_COLOR_ONE;
+	}
+
+	public static Player getPlayerSecond() {
+		return playerSecond;
+	}
+	public static Color getPlayerTwoColor() {
+		return PLAYER_COLOR_TWO;
+	}
+
+	// Player-Colors:
+	private final Color PLAYER_COLOR_NONE = new Color(230, 230, 230, 150);
 	private final Font FONT_BUTTON = new Font("Arial", Font.CENTER_BASELINE, 16);
 
 	private final Color BUTTON_COLOR = new Color(250, 180, 50);
-
 	private boolean hasPlayerTurnedPin;
-	private static ArrayList<Pin> pin;
-
 	private int playerNowPossible, playerSecondPossible;
-
 	private String gameOverLabel;
+
 	private int playerOnePins, playerTwoPins;
 
-	private static Player playerNow;
-	private static Player playerSecond;
-
 	private GameWindow main;
+
 	private infoBoard info;
+
 	private Board reversi;
+
 	private JButton restart;
 
 	public GameCore() {
@@ -63,93 +84,6 @@ public class GameCore extends JPanel implements MouseListener {
 		start();
 	}
 
-	private void start() {
-		reversi.setGameOver(false, null);
-		initialisePin();
-		initPlayer();
-	}
-
-	private void restart() {
-		reversi.removeAll();
-		reversi.repaint();
-		start();
-	}
-
-	private String gameOverLabel() {
-
-		// get the Text for Game-Over
-
-		gameOverLabel = "Spieler ";
-
-		for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
-
-			Pin p = i.next();
-
-			Color color = p.getColor();
-
-			if (color == GameCore.getPlayerOneColor()) {
-				playerOnePins++;
-			} else if (color == GameCore.getPlayerTwoColor()) {
-				playerTwoPins++;
-			}
-		}
-
-		if (playerOnePins > playerTwoPins) {
-			gameOverLabel += " ROT  hat gewonnen !!!";
-		} else if (playerTwoPins > playerOnePins) {
-			gameOverLabel += "BLAU  hat gewonnen !!!";
-		} else {
-			gameOverLabel = "          UNENTSCHIEDEN !!!";
-		}
-
-		return gameOverLabel;
-	}
-
-	private void initPlayer() {
-		// set both Player
-		hasPlayerTurnedPin = false;
-
-		playerNow = new Player(PLAYER_COLOR_ONE, " Rot", "ONE");
-		playerSecond = new Player(PLAYER_COLOR_TWO, "Blau", "TWO");
-
-		setBackground();
-	}
-
-	private void initialisePin() {
-		// Drawing all Pins to an ArrayList:
-		pin = new ArrayList<Pin>();
-
-		for (int y = 1; y <= 8; y++) {
-			for (int x = 1; x <= 8; x++) {
-				Pin pin1 = new Pin((x - 1) + ((y - 1) * 8), x * 60, y * 60, PLAYER_COLOR_NONE);
-				pin.add(pin1);
-			}
-		}
-
-		// set Start-Pins for each Player
-		pin.get(27).setColor(PLAYER_COLOR_ONE);
-		pin.get(28).setColor(PLAYER_COLOR_ONE);
-
-		pin.get(35).setColor(PLAYER_COLOR_TWO);
-		pin.get(36).setColor(PLAYER_COLOR_TWO);
-	}
-
-	private void switchPlayer() {
-		// After Move switch Player
-		hasPlayerTurnedPin = false;
-
-		if (!reversi.getGameOver()) {
-			Player tmp1 = playerNow;
-			Player tmp2 = playerSecond;
-			playerNow = tmp2;
-			playerSecond = tmp1;
-			setBackground();
-		}
-		checkForGameOver();
-		reversi.repaint();
-		info.repaint();
-	}
-
 	private void checkForGameOver() {
 
 		playerNowPossible = 0;
@@ -169,6 +103,61 @@ public class GameCore extends JPanel implements MouseListener {
 			reversi.setGameOver(true, gameOverLabel());
 		}
 
+	}
+
+	private int checkMoves(int RangeX, int RangeY, Color colorPlayerNow, Color colorPlayerSecond, int clickedX,
+			int clickedY, int clickedPin) {
+
+		/*
+		 * Checking for possible Moves beginning from clicked Pin and counting how many
+		 * turns are there at each Direction.
+		 * 
+		 * NW, N, NE W, E SW, S, SE
+		 */
+
+		int possible = 0;
+		int posPin = 0;
+		int x = 0;
+		int y = 0;
+
+		int rangeWidth = 0;
+
+		if (pin.get(clickedPin).getColor() == PLAYER_COLOR_NONE) {
+
+			while (true) {
+
+				rangeWidth++;
+
+				x = clickedX + (RangeX * rangeWidth);
+				y = clickedY + (RangeY * rangeWidth);
+				posPin = x + (y * 8);
+
+				if (x < 0 || x > 7) {
+					possible = 0;
+					break;
+				} else if (y < 0 || y > 7) {
+					possible = 0;
+					break;
+				} else {
+
+					if (pin.get(posPin).getColor() == colorPlayerSecond) {
+						possible++;
+					} else if (pin.get(posPin).getColor() == PLAYER_COLOR_NONE) {
+						possible = 0;
+						break;
+					} else if (pin.get(posPin).getColor() == colorPlayerNow && posPin == clickedPin) {
+						possible = 0;
+						break;
+					} else if (pin.get(posPin).getColor() == colorPlayerNow && possible > 0) {
+						break;
+					} else {
+						possible = 0;
+						break;
+					}
+				}
+			}
+		}
+		return possible;
 	}
 
 	private int checkPossibilities(Color playerNowColor, Color playerSecondColor) {
@@ -210,6 +199,142 @@ public class GameCore extends JPanel implements MouseListener {
 			}
 		}
 		return possible;
+	}
+
+	private String gameOverLabel() {
+
+		// get the Text for Game-Over
+
+		gameOverLabel = "Spieler ";
+
+		for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
+
+			Pin p = i.next();
+
+			Color color = p.getColor();
+
+			if (color == GameCore.getPlayerOneColor()) {
+				playerOnePins++;
+			} else if (color == GameCore.getPlayerTwoColor()) {
+				playerTwoPins++;
+			}
+		}
+
+		if (playerOnePins > playerTwoPins) {
+			gameOverLabel += " ROT  hat gewonnen !!!";
+		} else if (playerTwoPins > playerOnePins) {
+			gameOverLabel += "BLAU  hat gewonnen !!!";
+		} else {
+			gameOverLabel = "          UNENTSCHIEDEN !!!";
+		}
+
+		return gameOverLabel;
+	}
+
+	private void initialisePin() {
+		// Drawing all Pins to an ArrayList:
+		pin = new ArrayList<Pin>();
+
+		for (int y = 1; y <= 8; y++) {
+			for (int x = 1; x <= 8; x++) {
+				Pin pin1 = new Pin((x - 1) + ((y - 1) * 8), x * 60, y * 60, PLAYER_COLOR_NONE);
+				pin.add(pin1);
+			}
+		}
+
+		// set Start-Pins for each Player
+		pin.get(27).setColor(PLAYER_COLOR_ONE);
+		pin.get(28).setColor(PLAYER_COLOR_ONE);
+
+		pin.get(35).setColor(PLAYER_COLOR_TWO);
+		pin.get(36).setColor(PLAYER_COLOR_TWO);
+	}
+
+	private void initPlayer() {
+		// set both Player
+		hasPlayerTurnedPin = false;
+
+		playerNow = new Player(PLAYER_COLOR_ONE, " Rot", "ONE");
+		playerSecond = new Player(PLAYER_COLOR_TWO, "Blau", "TWO");
+
+		setBackground();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+
+		if (e.getSource().equals(restart)) {
+			restart();
+		}
+
+		if (!reversi.getGameOver()) {
+			int clickedX = (e.getX() / 60) - 1;
+			int clickedY = (e.getY() / 60) - 1;
+			int clickedPin = clickedX + (clickedY * 8);
+
+			for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
+
+				Pin tmp = i.next();
+				if (((tmp.getX() + 26) - e.getX()) * ((tmp.getX() + 26) - e.getX())
+						+ ((tmp.getY() + 26) - e.getY()) * ((tmp.getY() + 26) - e.getY()) < 25 * 25) {
+					setMove(clickedX, clickedY, clickedPin);
+				}
+			}
+		}
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+
+		super.paintComponent(g);
+
+		Graphics2D g2 = (Graphics2D) g;
+
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+		for (ListIterator<Pin> i = pin.listIterator(); i.hasNext();) {
+
+			Pin p = i.next();
+			p.drawMe(g2);
+		}
+
+	}
+
+	private void restart() {
+		reversi.removeAll();
+		reversi.repaint();
+		start();
+	}
+
+	private void setBackground() {
+		// set Background to Player Color
+		main.getBack().setBackground(playerNow.getColor());
 	}
 
 	private void setMove(int clickedX, int clickedY, int clickedPin) {
@@ -287,150 +412,26 @@ public class GameCore extends JPanel implements MouseListener {
 		}
 	}
 
-	private int checkMoves(int RangeX, int RangeY, Color colorPlayerNow, Color colorPlayerSecond, int clickedX,
-			int clickedY, int clickedPin) {
-
-		/*
-		 * Checking for possible Moves beginning from clicked Pin and counting how many
-		 * turns are there at each Direction.
-		 * 
-		 * NW, N, NE W, E SW, S, SE
-		 */
-
-		int possible = 0;
-		int posPin = 0;
-		int x = 0;
-		int y = 0;
-
-		int rangeWidth = 0;
-
-		if (pin.get(clickedPin).getColor() == PLAYER_COLOR_NONE) {
-
-			while (true) {
-
-				rangeWidth++;
-
-				x = clickedX + (RangeX * rangeWidth);
-				y = clickedY + (RangeY * rangeWidth);
-				posPin = x + (y * 8);
-
-				if (x < 0 || x > 7) {
-					possible = 0;
-					break;
-				} else if (y < 0 || y > 7) {
-					possible = 0;
-					break;
-				} else {
-
-					if (pin.get(posPin).getColor() == colorPlayerSecond) {
-						possible++;
-					} else if (pin.get(posPin).getColor() == PLAYER_COLOR_NONE) {
-						possible = 0;
-						break;
-					} else if (pin.get(posPin).getColor() == colorPlayerNow && posPin == clickedPin) {
-						possible = 0;
-						break;
-					} else if (pin.get(posPin).getColor() == colorPlayerNow && possible > 0) {
-						break;
-					} else {
-						possible = 0;
-						break;
-					}
-				}
-			}
-		}
-		return possible;
+	private void start() {
+		reversi.setGameOver(false, null);
+		initialisePin();
+		initPlayer();
 	}
 
-	private void setBackground() {
-		// set Background to Player Color
-		main.getBack().setBackground(playerNow.getColor());
-	}
-
-	public static ArrayList<Pin> getPinList() {
-		return pin;
-	}
-
-	public static Player getPlayerNow() {
-		return playerNow;
-	}
-
-	public static Player getPlayerSecond() {
-		return playerSecond;
-	}
-
-	public static Color getPlayerOneColor() {
-		return PLAYER_COLOR_ONE;
-	}
-
-	public static Color getPlayerTwoColor() {
-		return PLAYER_COLOR_TWO;
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-
-		super.paintComponent(g);
-
-		Graphics2D g2 = (Graphics2D) g;
-
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-		for (ListIterator<Pin> i = pin.listIterator(); i.hasNext();) {
-
-			Pin p = i.next();
-			p.drawMe(g2);
-		}
-
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-
-		if (e.getSource().equals(restart)) {
-			restart();
-		}
+	private void switchPlayer() {
+		// After Move switch Player
+		hasPlayerTurnedPin = false;
 
 		if (!reversi.getGameOver()) {
-			int clickedX = (e.getX() / 60) - 1;
-			int clickedY = (e.getY() / 60) - 1;
-			int clickedPin = clickedX + (clickedY * 8);
-
-			for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
-
-				Pin tmp = i.next();
-				if (((tmp.getX() + 26) - e.getX()) * ((tmp.getX() + 26) - e.getX())
-						+ ((tmp.getY() + 26) - e.getY()) * ((tmp.getY() + 26) - e.getY()) < 25 * 25) {
-					setMove(clickedX, clickedY, clickedPin);
-				}
-			}
+			Player tmp1 = playerNow;
+			Player tmp2 = playerSecond;
+			playerNow = tmp2;
+			playerSecond = tmp1;
+			setBackground();
 		}
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		checkForGameOver();
+		reversi.repaint();
+		info.repaint();
 	}
 
 }

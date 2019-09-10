@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 public class Pin extends JPanel {
+	private static final long serialVersionUID = 1L;
 
 	// Pin-Colors:
 	private Color color;
@@ -30,35 +31,6 @@ public class Pin extends JPanel {
 		this.isPin = false;
 	}
 
-	public void setColor(Color color) {
-		this.color = color;
-		setIsPin();
-	}
-
-	private void setIsPin() {
-		this.isPin = true;
-	}
-
-	public int getX() {
-		return this.x;
-	}
-
-	public int getY() {
-		return this.y;
-	}
-
-	public Color getColor() {
-		return this.color;
-	}
-
-	public boolean getIsPin() {
-		return this.isPin;
-	}
-
-	public int getID() {
-		return this.id;
-	}
-
 	public void drawMe(Graphics2D g2) {
 		// Drawing Pins
 		if (!this.isPin) {
@@ -73,6 +45,37 @@ public class Pin extends JPanel {
 
 		g2.setColor(this.color);
 		g2.fillOval(this.x, this.y, 51, 51);
+	}
+
+	public Color getColor() {
+		return this.color;
+	}
+
+	public int getID() {
+		return this.id;
+	}
+
+	public boolean getIsPin() {
+		return this.isPin;
+	}
+
+	@Override
+	public int getX() {
+		return this.x;
+	}
+
+	@Override
+	public int getY() {
+		return this.y;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+		setIsPin();
+	}
+
+	private void setIsPin() {
+		this.isPin = true;
 	}
 
 }
