@@ -94,7 +94,6 @@ public class GameCore extends JPanel implements MouseListener {
 		playerSecondPossible = checkPossibilities(playerSecond.getColor(), playerNow.getColor());
 
 		if (playerNowPossible == 0 && playerSecondPossible == 0) {
-			System.out.println("GO");
 			reversi.setGameOver(true, gameOverLabel());
 		} else if (playerNowPossible == 0) {
 			playerNow.increaseNoMoves();
@@ -264,7 +263,24 @@ public class GameCore extends JPanel implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
 		if (e.getSource().equals(restart)) {
 			restart();
 		}
@@ -283,25 +299,6 @@ public class GameCore extends JPanel implements MouseListener {
 				}
 			}
 		}
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -329,8 +326,11 @@ public class GameCore extends JPanel implements MouseListener {
 	}
 
 	private void restart() {
+		playerNow.reset();
+		playerSecond.reset();
 		reversi.removeAll();
 		reversi.repaint();
+		info.repaint();
 		start();
 	}
 

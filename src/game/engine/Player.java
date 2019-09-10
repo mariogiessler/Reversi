@@ -40,6 +40,11 @@ public class Player {
 	public void increaseMoves() {
 		this.movesDone++;
 	}
+	
+	public void reset() {
+		this.movesDone=0;
+		this.noMovesDone=0;
+	}
 
 	public void increaseNoMoves() {
 		this.noMovesDone++;
