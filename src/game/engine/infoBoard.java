@@ -11,7 +11,6 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
 public class infoBoard extends JPanel {
-	private static final long serialVersionUID = 1L;
 
 	// Label-Text:
 	private final String PLAYER_BEFORE_TEXT = "Spieler ";

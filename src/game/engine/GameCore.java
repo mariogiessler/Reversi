@@ -15,7 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class GameCore extends JPanel implements MouseListener {
-	private static final long serialVersionUID = 1L;
+
 	private final static Color PLAYER_COLOR_ONE = new Color(220, 20, 20);
 	private final static Color PLAYER_COLOR_TWO = new Color(50, 100, 200);
 	private static ArrayList<Pin> pin;
@@ -26,6 +26,7 @@ public class GameCore extends JPanel implements MouseListener {
 	public static ArrayList<Pin> getPinList() {
 		return pin;
 	}
+
 	public static Player getPlayerNow() {
 		return playerNow;
 	}
@@ -37,6 +38,7 @@ public class GameCore extends JPanel implements MouseListener {
 	public static Player getPlayerSecond() {
 		return playerSecond;
 	}
+
 	public static Color getPlayerTwoColor() {
 		return PLAYER_COLOR_TWO;
 	}

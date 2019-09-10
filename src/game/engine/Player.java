@@ -3,6 +3,7 @@ package game.engine;
 import java.awt.Color;
 
 public class Player {
+	
 	private String label;
 	private String name;
 	private Color color;

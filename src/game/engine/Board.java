@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 
 public class Board extends JPanel {
 
-	private static final long serialVersionUID = 1L;
 	final static Color SHADOW_COLOR = new Color(10, 10, 10, 30);
 	// Board-Colors:
 	private final Color MAIN_COLOR = new Color(250, 250, 250, 255);

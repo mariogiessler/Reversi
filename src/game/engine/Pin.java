@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 public class Pin extends JPanel {
-	private static final long serialVersionUID = 1L;
 
 	// Pin-Colors:
 	private Color color;
