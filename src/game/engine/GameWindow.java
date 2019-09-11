@@ -13,12 +13,14 @@ public class GameWindow extends JPanel {
 
 	public GameWindow() {
 
+		// create the Main-Frame
 		this.main = new JFrame("Reversi");
 		main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(null);
 		main.getContentPane().add(this);
 		main.setIgnoreRepaint(true);
 
+		// define Background-Panel-Layer
 		back = new JPanel();
 		back.setPreferredSize(new Dimension(800, 600));
 		back.setLayout(new BorderLayout());
@@ -32,6 +34,7 @@ public class GameWindow extends JPanel {
 	}
 
 	public JPanel getBack() {
+		// so can other class call on Back-Panel-Layer
 		return this.back;
 	}
 }

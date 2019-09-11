@@ -13,9 +13,9 @@ import javax.swing.JPanel;
 
 public class Board extends JPanel {
 
-	final static Color SHADOW_COLOR = new Color(10, 10, 10, 30);
 	// Board-Colors:
 	private final Color MAIN_COLOR = new Color(250, 250, 250, 255);
+	final static Color SHADOW_COLOR = new Color(10, 10, 10, 30);
 
 	// Game-Over Colors:
 	private final Color LABEL_COLOR = new Color(240, 255, 240, 160);
@@ -26,17 +26,26 @@ public class Board extends JPanel {
 	private final Font FONT_HEADLINE = new Font("Arial", Font.BOLD, 60);
 	private final Font FONT_MAIN = new Font("Arial", Font.BOLD, 25);
 
+	// other Settings for Game over
 	private boolean isGameOver;
 	private String gameOverLabel;
 
 	public Board() {
+		
+		// set this Panel (Gameboard)
 		new JPanel();
 		this.setPreferredSize(new Dimension(600, 600));
 		this.setOpaque(false);
 	}
 
+	public void setGameOver(boolean isGameOver, String gameOverLabel) {
+		// is getting the Game-Over Message from GameCore-class
+		this.isGameOver = isGameOver;
+		this.gameOverLabel = gameOverLabel;
+	}
+	
 	public boolean getGameOver() {
-		// is asked by CameCore
+		// tell other class if is Game over
 		return this.isGameOver;
 	}
 
@@ -52,15 +61,16 @@ public class Board extends JPanel {
 
 		Dimension d = this.getPreferredSize();
 
+		//drawing Board
 		g2.setColor(SHADOW_COLOR);
 		g2.fillRoundRect(30, 25, d.width - 52, d.height - 61, 100, 100);
 		g2.setColor(MAIN_COLOR);
 		g2.fillRoundRect(20, 20, d.width - 50, d.height - 60, 100, 100);
 
-		// Draw Pins on Board
+		// drawing Pins on Board
 		for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
 			Pin tmp = i.next();
-			// go to Pin and draw every Pin in List
+			// draw every Pin in List
 			tmp.drawMe(g2);
 		}
 
@@ -78,11 +88,4 @@ public class Board extends JPanel {
 			g2.drawString(gameOverLabel, 110, 330);
 		}
 	}
-
-	public void setGameOver(boolean isGameOver, String gameOverLabel) {
-		// Becomes the Game-Over Message from GameCore
-		this.isGameOver = isGameOver;
-		this.gameOverLabel = gameOverLabel;
-	}
-
 }

@@ -20,28 +20,29 @@ public class GameCore extends JPanel implements MouseListener {
 	private final static Color PLAYER_COLOR_ONE = new Color(220, 20, 20);
 	private final static Color PLAYER_COLOR_TWO = new Color(50, 100, 200);
 	private final Color PLAYER_COLOR_NONE = new Color(230, 230, 230, 150);
-	private final Font FONT_BUTTON = new Font("Arial", Font.CENTER_BASELINE, 16);
 
+	// Button-Settings
+	private final Font FONT_BUTTON = new Font("Arial", Font.CENTER_BASELINE, 16);
 	private final Color BUTTON_COLOR = new Color(250, 180, 50);
-	private boolean hasPlayerTurnedPin;
-	private int playerNowPossible, playerSecondPossible;
 	private String gameOverLabel;
 
+	// storing Pin-Data
 	private static ArrayList<Pin> pin;
+
+	// variables for the Players
 	private static Player playerNow;
 	private static Player playerSecond;
+	private boolean hasPlayerTurnedPin;
+	private int playerNowPossible, playerSecondPossible;
 
-	private int playerOnePins, playerTwoPins;
-
+	// Frames and Panels
 	private GameWindow main;
-
 	private infoBoard info;
-
 	private Board reversi;
-
 	private JButton restart;
 
 	public GameCore() {
+		// initialisize Window and Display-Panels
 		main = new GameWindow();
 		info = new infoBoard();
 		info.setLayout(null);
@@ -49,6 +50,7 @@ public class GameCore extends JPanel implements MouseListener {
 		reversi = new Board();
 		reversi.addMouseListener(this);
 
+		// set Button for Restart on Info-Board (Sidebar)
 		restart = new JButton("Restart");
 		restart.setFont(FONT_BUTTON);
 		restart.setBackground(BUTTON_COLOR);
@@ -59,6 +61,7 @@ public class GameCore extends JPanel implements MouseListener {
 
 		info.add(restart);
 
+		// add Main-Gameboard and Sidebar to Frame
 		main.getBack().add(info, BorderLayout.EAST);
 		main.getBack().add(reversi, BorderLayout.WEST);
 
@@ -72,16 +75,19 @@ public class GameCore extends JPanel implements MouseListener {
 	}
 
 	private void restart() {
+		// reset Player and Panels
 		playerNow.reset();
 		playerSecond.reset();
 		reversi.removeAll();
 		reversi.repaint();
+
+		// redraw Panels
 		info.repaint();
 		start();
 	}
 
 	private void initialisePin() {
-		// Drawing all Pins to an ArrayList:
+		// drawing all Pins to an ArrayList:
 		pin = new ArrayList<Pin>();
 
 		for (int y = 1; y <= 8; y++) {
@@ -100,11 +106,11 @@ public class GameCore extends JPanel implements MouseListener {
 	}
 
 	private void initPlayer() {
-		// set both Player
+		// create Players
 		hasPlayerTurnedPin = false;
 
-		playerNow = new Player(PLAYER_COLOR_ONE, " Rot", "ONE");
-		playerSecond = new Player(PLAYER_COLOR_TWO, "Blau", "TWO");
+		playerNow = new Player(PLAYER_COLOR_ONE, " Rot");
+		playerSecond = new Player(PLAYER_COLOR_TWO, "Blau");
 
 		setBackground();
 	}
@@ -115,11 +121,11 @@ public class GameCore extends JPanel implements MouseListener {
 	}
 
 	private void setMove(int clickedX, int clickedY, int clickedPin) {
+		// set Player has done no move
+		hasPlayerTurnedPin = false;
 
-		// ask for moves and draw all possible Pins for each Direction
-
+		// ask for moves in each Cardinal-direction
 		int cardinals = 0;
-
 		int nw = checkMoves(-1, -1, playerNow.getColor(), playerSecond.getColor(), clickedX, clickedY, clickedPin);
 		int n = checkMoves(0, -1, playerNow.getColor(), playerSecond.getColor(), clickedX, clickedY, clickedPin);
 		int ne = checkMoves(+1, -1, playerNow.getColor(), playerSecond.getColor(), clickedX, clickedY, clickedPin);
@@ -128,32 +134,29 @@ public class GameCore extends JPanel implements MouseListener {
 		int se = checkMoves(+1, +1, playerNow.getColor(), playerSecond.getColor(), clickedX, clickedY, clickedPin);
 		int s = checkMoves(0, +1, playerNow.getColor(), playerSecond.getColor(), clickedX, clickedY, clickedPin);
 		int sw = checkMoves(-1, +1, playerNow.getColor(), playerSecond.getColor(), clickedX, clickedY, clickedPin);
-
 		cardinals = nw + n + ne + e + w + sw + s + se;
 
+		// set Player has done a move, if move is possible
 		if (cardinals > 0) {
 			hasPlayerTurnedPin = true;
 		}
 
+		// drawing move Possebilities for each cardinal-direction
 		if (nw > 0) {
 			for (int i = 0; i <= nw; i++) {
 				pin.get(clickedPin - (i * 9)).setColor(playerNow.getColor());
 			}
-
 		}
-
 		if (n > 0) {
 			for (int i = 0; i <= n; i++) {
 				pin.get(clickedPin - (i * 8)).setColor(playerNow.getColor());
 			}
 		}
-
 		if (ne > 0) {
 			for (int i = 0; i <= ne; i++) {
 				pin.get(clickedPin - (i * 7)).setColor(playerNow.getColor());
 			}
 		}
-
 		if (e > 0) {
 			for (int i = 0; i <= e; i++) {
 				pin.get(clickedPin + i).setColor(playerNow.getColor());
@@ -169,23 +172,20 @@ public class GameCore extends JPanel implements MouseListener {
 			for (int i = 0; i <= sw; i++) {
 				pin.get(clickedPin + (i * 7)).setColor(playerNow.getColor());
 			}
-
 		}
 		if (s > 0) {
 			for (int i = 0; i <= s; i++) {
 				pin.get(clickedPin + (i * 8)).setColor(playerNow.getColor());
 			}
 		}
-
 		if (se > 0) {
 			for (int i = 0; i <= se; i++) {
 				pin.get(clickedPin + (i * 9)).setColor(playerNow.getColor());
 			}
-
 		}
 		if (hasPlayerTurnedPin) {
-			playerNow.increaseMoves();
-			switchPlayer();
+			playerNow.increaseMoves(); // count Move
+			switchPlayer(); // turn to other Player
 		}
 	}
 
@@ -245,23 +245,29 @@ public class GameCore extends JPanel implements MouseListener {
 	}
 
 	private int checkPossibilities(Color playerNowColor, Color playerSecondColor) {
+		/*
+		 * search Pin-List for each free Pin and check if there are possible Moves
+		 */
 
+		// set all Counter for cardinals to zero
 		int nw = 0, n = 0, ne = 0;
 		int w = 0, e = 0;
 		int sw = 0, s = 0, se = 0;
 		int possible = 0;
 
+		// search in Pin-List
 		for (ListIterator<Pin> i = pin.listIterator(); i.hasNext();) {
-
 			Pin p = i.next();
-			int calculatedPinX = (p.x / 60) - 1;
-			int calculatedPinY = (p.y / 60) - 1;
+
+			// get simulated Pin
+			int calculatedPinX = (p.getX() / 60) - 1;
+			int calculatedPinY = (p.getY() / 60) - 1;
 			int calculatedPos = p.getID();
 
-			if (p.getColor() == PLAYER_COLOR_NONE) {
-
+			if (p.getColor() == PLAYER_COLOR_NONE) { // if Pin isn't set
 				int cardinals = 0;
 
+				// check cardinals for Possibility
 				nw = checkMoves(-1, -1, playerNowColor, playerSecondColor, calculatedPinX, calculatedPinY,
 						calculatedPos);
 				n = checkMoves(0, -1, playerNowColor, playerSecondColor, calculatedPinX, calculatedPinY, calculatedPos);
@@ -277,8 +283,8 @@ public class GameCore extends JPanel implements MouseListener {
 
 				cardinals = nw + n + ne + e + w + sw + s + se;
 
-				if (cardinals > 0) {
-					possible++;
+				if (cardinals > 0) { // if there is only one Possibility to Move
+					possible++; // count Possibility
 				}
 			}
 		}
@@ -286,7 +292,7 @@ public class GameCore extends JPanel implements MouseListener {
 	}
 
 	private void switchPlayer() {
-		// After Move switch Player
+		// turn Player to each other
 		hasPlayerTurnedPin = false;
 
 		if (!reversi.getGameOver()) {
@@ -302,65 +308,48 @@ public class GameCore extends JPanel implements MouseListener {
 	}
 
 	private void checkForGameOver() {
-
+		// checking if there are possible Moves left
 		playerNowPossible = 0;
 		playerSecondPossible = 0;
 		playerNowPossible = checkPossibilities(playerNow.getColor(), playerSecond.getColor());
 		playerSecondPossible = checkPossibilities(playerSecond.getColor(), playerNow.getColor());
 
 		if (playerNowPossible == 0 && playerSecondPossible == 0) {
-			reversi.setGameOver(true, gameOverLabel());
+			reversi.setGameOver(true, info.gameOverLabel());
 		} else if (playerNowPossible == 0) {
 			playerNow.increaseNoMoves();
 			switchPlayer();
 		}
 
 		if (playerNow.getMoves() + playerNow.getNoMoves() + playerSecond.getMoves() + playerSecond.getNoMoves() >= 60) {
-			reversi.setGameOver(true, gameOverLabel());
+			reversi.setGameOver(true, info.gameOverLabel());
 		}
 
-	}
-
-	private String gameOverLabel() {
-
-		// get the Text for Game-Over
-
-		gameOverLabel = "Spieler ";
-
-		for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
-
-			Pin p = i.next();
-
-			Color color = p.getColor();
-
-			if (color == PLAYER_COLOR_ONE) {
-				playerOnePins++;
-			} else if (color == PLAYER_COLOR_TWO) {
-				playerTwoPins++;
-			}
-		}
-
-		if (playerOnePins > playerTwoPins) {
-			gameOverLabel += " ROT  hat gewonnen !!!";
-		} else if (playerTwoPins > playerOnePins) {
-			gameOverLabel += "BLAU  hat gewonnen !!!";
-		} else {
-			gameOverLabel = "          UNENTSCHIEDEN !!!";
-		}
-
-		return gameOverLabel;
 	}
 
 	public static ArrayList<Pin> getPinList() {
+		// show Pin-List in other class
 		return pin;
 	}
 
 	public static Player getPlayerNow() {
+		// show Player in other class
 		return playerNow;
 	}
 
 	public static Player getPlayerSecond() {
+		// show second Player in other class
 		return playerSecond;
+	}
+	
+	public static Color getPlayerNowColor() {
+		// show Player in other class
+		return PLAYER_COLOR_ONE;
+	}
+	
+	public static Color getPlayerSecondColor() {
+		// show Player in other class
+		return PLAYER_COLOR_TWO;
 	}
 
 	@Override
@@ -383,18 +372,21 @@ public class GameCore extends JPanel implements MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (e.getSource().equals(restart)) {
+		if (e.getSource().equals(restart)) { // click on Restart-Button
 			restart();
 		}
 
 		if (!reversi.getGameOver()) {
+			// get Position in Pin-List for this click
 			int clickedX = (e.getX() / 60) - 1;
 			int clickedY = (e.getY() / 60) - 1;
 			int clickedPin = clickedX + (clickedY * 8);
 
+			// get Position out of Pin-List
 			for (ListIterator<Pin> i = GameCore.getPinList().listIterator(); i.hasNext();) {
 
 				Pin tmp = i.next();
+				// look for click is inside Circle
 				if (((tmp.getX() + 26) - e.getX()) * ((tmp.getX() + 26) - e.getX())
 						+ ((tmp.getY() + 26) - e.getY()) * ((tmp.getY() + 26) - e.getY()) < 25 * 25) {
 					setMove(clickedX, clickedY, clickedPin);
@@ -408,23 +400,4 @@ public class GameCore extends JPanel implements MouseListener {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-
-		super.paintComponent(g);
-
-		Graphics2D g2 = (Graphics2D) g;
-
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-		for (ListIterator<Pin> i = pin.listIterator(); i.hasNext();) {
-
-			Pin p = i.next();
-			p.drawMe(g2);
-		}
-
-	}
-
 }
